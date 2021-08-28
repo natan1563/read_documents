@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NoticiasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('teste', function () {
-    return 'Testando';
+Route::prefix('noticias')->group(function () {
+    Route::get('', [NoticiasController::class, 'index']);
+    Route::post('/create', [NoticiasController::class, 'store']);
 });
