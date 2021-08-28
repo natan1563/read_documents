@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Noticias;
+use Exception;
 use Illuminate\Http\Request;
 
 use function Psy\debug;
@@ -37,12 +38,31 @@ class NoticiasController extends Controller
      */
     public function store(Request $request)
     {
-        // echo "<pre>"; var_dump($request->all()); echo "</pre>"; exit;
-        if (is_array($request->all())) {
-            foreach ($request->all() as $requestUnique) {
-                Noticias::create($requestUnique);
-            }
+        $requestData = $request->all();
 
+        switch (true) {
+            case (is_array(current($requestData))):
+               try {
+                foreach ($requestData as $requestUnique)
+                    Noticias::create($requestUnique);
+
+                return response()->json(['success' => 'Dados salvos com sucesso'], 201);
+               } catch (Exception $e) {
+                return response()->json(['error' => 'Falha na gravação dos dados'], 400);
+            }
+            break;
+
+            case (count($requestData)):
+                try {
+                    Noticias::create($requestData);
+                    return response()->json(['success' => 'Dado salvo com sucesso'], 201);
+                } catch (Exception $e) {
+                    return response()->json(['error' => 'Falha na gravação do dado'], 400);
+                }
+            break;
+
+            default:
+                return response()->json(['error' => 'Dados invalidos'], 400);
         }
     }
 
