@@ -17,7 +17,7 @@ class NoticiasController extends Controller
      */
     public function index()
     {
-        return Noticias::all();
+        return Noticias::orderBy('id', 'desc')->take(10)->get();
     }
 
     /**
